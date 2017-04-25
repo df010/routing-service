@@ -1,0 +1,7 @@
+# Send HAProxy logs to file if configured
+#
+$template VcapComponentLogFile, "/var/vcap/sys/log/haproxy/haproxy.log"
+$template VcapComponentLogFormat, "%msg%\n"
+
+:programname, startswith, "haproxy" -?VcapComponentLogFile;VcapComponentLogFormat
+:programname, startswith, "haproxy" ~

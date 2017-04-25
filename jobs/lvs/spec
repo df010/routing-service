@@ -1,0 +1,23 @@
+---
+name: lvs
+
+description: "LVS servers for load balance"
+
+packages: 
+- lvs
+
+templates: 
+  lvs.conf.erb: config/lvs.conf
+  pre-start.erb: bin/pre-start
+
+properties:
+  lvs.ports:
+    default: "80,443"
+    description: ports for lvs to forward to
+  keepalived.vip:
+    description: VIP for this LVS Director to use
+  lvs.real_servers:
+    description: backend servers
+  lvs.keepalived_conf:
+    description: config file location for keepalived
+    default: /var/vcap/jobs/keepalived/config/keepalived.conf

@@ -1,0 +1,52 @@
+---
+input_mappings:
+- key: keepalived.vip
+  valueformat: ip_range
+  valuemap: 1:all
+  groupby: network
+  shared: true
+- key: keepalived.virtual_router_id
+  valueformat: number_range
+  valuemap: 1:all
+  groupby: network
+  shared: true
+- key: keepalived.priority
+  valueformat: number
+  valuemap: 1
+- key: user.password
+  valueformat: string
+  valuemap: 20:auto
+binding_credentials:
+- name: ip
+  datatype: array
+  value: job[*].ip
+- name: vip
+  datatype: string
+  value: properties[keepalived.vip]
+- name: user
+  datatype: string
+  value: cloud
+- name: password
+  datatype: string
+  value: properties[user.password]
+instance_groups:
+- name: haproxy
+  templates:
+  - haproxy
+  - keepalived
+  - user
+- name: nginx
+  templates:
+  - nginx
+  - keepalived
+  - user
+- name: apache
+  templates:
+  - keepalived
+  - apache
+  - user
+- name: lvs
+  templates:
+  - keepalived
+  - lvs
+  - user

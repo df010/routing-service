@@ -1,0 +1,60 @@
+# abort script on any command that exits with a non zero value
+set -e
+
+cd apache_server;
+
+BASE_DIR=`pwd`
+mkdir ${BOSH_INSTALL_TARGET}/libs
+find . 
+#sleep 180000
+tar xzf apr/apr-1.5.2.tar.gz
+(
+	set -e
+	cd apr-1.5.2
+	./configure --enable-shared --enable-threads --enable-other-child
+	make
+	cp .libs/libapr-1.so* ${BOSH_INSTALL_TARGET}/libs/
+)
+
+tar xzf apr/apr-iconv-1.2.1.tar.gz
+(
+	set -e
+	cd apr-iconv-1.2.1
+	./configure --with-apr=${BASE_DIR}/apr-1.5.2
+	make
+)
+
+tar xzf apr/apr-util-1.5.4.tar.gz
+(
+	set -e
+	cd apr-util-1.5.4
+	./configure --with-apr=${BASE_DIR}/apr-1.5.2/apr-1-config --with-iconv=${BASE_DIR}/apr-iconv-1.2.1
+	make
+	cp .libs/libaprutil-1.so* ${BOSH_INSTALL_TARGET}/libs/
+	cp xml/expat/.libs/libexpat.so* ${BOSH_INSTALL_TARGET}/libs/
+)
+
+tar xzf pcre/pcre-8.39.tar.gz
+(
+	set -e
+	cd pcre-8.39
+	./configure
+	make
+	make check
+	make install
+	cp .libs/lib* ${BOSH_INSTALL_TARGET}/libs/
+)
+
+tar xzf httpd/httpd-2.4.25.tar.gz
+(
+  set -e
+  cd httpd-2.4.25
+  ./configure --prefix=${BOSH_INSTALL_TARGET}/apache2 --with-apr=${BASE_DIR}/apr-1.5.2 --with-apr-util=${BASE_DIR}/apr-util-1.5.4 --with-pcre=${BASE_DIR}/pcre-8.39/pcre-config --with-apr-iconv=${BASE_DIR}/apr-iconv-1.2.1 --with-crypto
+  make
+  make install
+)
+
+# overwrite default config
+cp httpd/httpd.conf ${BOSH_INSTALL_TARGET}/apache2/conf/
+
+

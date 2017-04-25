@@ -1,0 +1,6 @@
+check process apache
+  with pidfile /var/vcap/sys/run/httpd.pid
+  start program "/var/vcap/jobs/apache/bin/ctl start" with timeout 60 seconds
+  stop program "/var/vcap/jobs/apache/bin/ctl stop" with timeout 60 seconds
+  group vcap
+  

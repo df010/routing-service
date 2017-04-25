@@ -1,0 +1,2 @@
+run download.sh to init src
+run test.sh to deploy to bosh-lite

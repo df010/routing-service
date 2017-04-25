@@ -1,0 +1,46 @@
+#!/bin/bash
+
+set -e
+
+PROC_NAME=apache2
+RUN_DIR=/var/vcap/packages/apache_server/apache2
+LIB_DIR=/var/vcap/packages/apache_server/libs
+LOG_DIR=${RUN_DIR}/logs
+WORK_DIR=/var/vcap/sys/run
+CONF_DIR=/var/vcap/jobs/apache/conf
+PIDFILE=${WORK_DIR}/httpd.pid
+
+export LD_LIBRARY_PATH=${LIB_DIR}:$LD_LIBRARY_PATH
+
+case $1 in
+
+  start)	  
+    # WORKAROUND: monit may attempt to run this script multiple times if mysqld does not start in time.
+    # Ensure that running this script multiple times does not spawn multiple copies of _ctrl
+
+    echo "start script: starting apache server..."
+    mkdir -p ${WORK_DIR}/www
+
+    ${RUN_DIR}/bin/apachectl start -f ${CONF_DIR}/httpd.conf
+    echo "start script: completed starting apache server."
+    ;;
+
+  stop)
+    echo "stop script: stopping."
+    if [ ! -f $PIDFILE ]; then
+      echo "apache is not running skip stopping"
+      exit 0
+    fi
+    
+	exec ${RUN_DIR}/bin/apachectl stop -f ${CONF_DIR}/httpd.conf
+	# sudo kill -9 `cat $PIDFILE`
+	sleep 2
+	sudo pkill httpd
+    echo "stop script: completed stopping apache server"
+    ;;
+
+  *)
+    echo "Usage: apache_ctl {start|stop}"
+    ;;
+
+esac

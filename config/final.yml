@@ -1,0 +1,5 @@
+name: routing-service
+blobstore:
+  provider: local
+  options:
+    blobstore_path: "/tmp/blobs"

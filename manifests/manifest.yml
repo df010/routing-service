@@ -1,0 +1,50 @@
+name: haproxy
+
+releases:
+- name: &release_name haproxy
+  version: latest
+
+stemcells:
+- alias: trusty
+  os: ubuntu-trusty
+  version: latest
+
+jobs:
+- name: haproxy
+  instances: 2
+  vm_type: medium
+  persistent_disk_type: ten
+  stemcell: trusty
+  networks:
+  - name: &network_name redis-instances
+  azs:
+  - lite
+  templates:
+  - name: keepalived
+    release: *release_name
+    properties:
+      keepalived:
+        vip: 10.244.14.99
+  - name: haproxy
+    release: *release_name
+    properties:
+      request_timeout_in_seconds: 900
+      ha_proxy:
+        disable_http: false
+        ssl_ciphers:
+        ssl_pem: "-----BEGIN CERTIFICATE-----\r\nMIIDzzCCAregAwIBAgIVAM6e94tSQQznLaJpmEXUIc1QNbp8MA0GCSqGSIb3DQEB\r\nBQUAMB8xCzAJBgNVBAYTAlVTMRAwDgYDVQQKDAdQaXZvdGFsMB4XDTE2MTIwNTA1\r\nMTc1OFoXDTE4MTIwNTA1MTc1OFowSTELMAkGA1UEBhMCVVMxEDAOBgNVBAoMB1Bp\r\ndm90YWwxKDAmBgNVBAMMHyoubG9naW4uZ2wtYWRtLnBhYXMucGFpYy5jb20uY24w\r\nggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDSiDKngBZ7kQ2h4OyZ0E6x\r\nqYY+NeSo5BLg6mPLdbMm7o1zZQZ8+WNUwJzpIykzDDQFxOcVvKulSiTFQOHJesns\r\n3Fkh1D1JaIkTYQyxjOfzQGoFYAGhJgLUVFHwSVgsvd+pbRoVsTnHRYCfWuiaqq9E\r\n0kzEMM0utmi5b6DSFYzruGtggEWcYA8lKay1nEVwLSUkE4OfXvOkEQXBaGDpr7Ns\r\nHszn9W1g2KfQkjx2ZqPl8hF2fzIu/GwOwlvv4ktdKtL7TvzZi9fphqUjywLrl7N2\r\nGAxDODhN6WufnnVCsj5Qtbh++esp+k2L+wZJVtXySC7cR1W11+gQxLq1MF3RDcGb\r\nAgMBAAGjgdcwgdQwDgYDVR0PAQH/BAQDAgeAMB0GA1UdDgQWBBSP2YSUPaegunNi\r\n1haqki8qFlk6LzAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwEwgYMGA1Ud\r\nEQR8MHqCHyoubG9naW4uZ2wtYWRtLnBhYXMucGFpYy5jb20uY26CHSoudWFhLmds\r\nLWFkbS5wYWFzLnBhaWMuY29tLmNugh0qLmFwcC5nbC1hZG0ucGFhcy5wYWljLmNv\r\nbS5jboIZKi5nbC1hZG0ucGFhcy5wYWljLmNvbS5jbjANBgkqhkiG9w0BAQUFAAOC\r\nAQEAgqQdE8OIXU5rONoesh55dNCzn48q+xx5mslMTF8s+HoeqR3TKaMz0ON0nSvP\r\ntozwDKu3ACMOODAImrP6QFPYbAap7Aa8DV1bc9H3JsSQZ2fEo/nXycAs2A0q/Rsz\r\ng625IQJUwZ8CrTczu2yrn5WzHPjdsmNQ392alu2RC39xUnoIMiLLXCV9+J42tkvc\r\nBFgOf6tL4hxyOWySJ953b0sFWhCLe5Cl3FVqKHgA2pSyP+uUzb4uI5kxlch98oq8\r\nz9ygG1ZtPF5SYoKc6XxTKlA/YFk10+phjP7E4kVRXORMR7qvz9ai8TChXRWZz1Sq\r\nmzgR0jWGeSD9gzBUaOUden3Fuw==\r\n-----END
+          CERTIFICATE-----\r\n\n-----BEGIN RSA PRIVATE KEY-----\r\nMIIEogIBAAKCAQEA0ogyp4AWe5ENoeDsmdBOsamGPjXkqOQS4Opjy3WzJu6Nc2UG\r\nfPljVMCc6SMpMww0BcTnFbyrpUokxUDhyXrJ7NxZIdQ9SWiJE2EMsYzn80BqBWAB\r\noSYC1FRR8ElYLL3fqW0aFbE5x0WAn1romqqvRNJMxDDNLrZouW+g0hWM67hrYIBF\r\nnGAPJSmstZxFcC0lJBODn17zpBEFwWhg6a+zbB7M5/VtYNin0JI8dmaj5fIRdn8y\r\nLvxsDsJb7+JLXSrS+0782YvX6YalI8sC65ezdhgMQzg4Telrn551QrI+ULW4fvnr\r\nKfpNi/sGSVbV8kgu3EdVtdfoEMS6tTBd0Q3BmwIDAQABAoIBADI8WYnqYHL/u7cC\r\nyrIxKHXwM54okfVS5sZQZ5um7CbACXSdiJzNjUwt4cMnpq8NnGQ8BcAEExkPxhJj\r\nVv0SlZg1Q/d0g2M+1GaRY8wCCV7b4fCCZiEjxs0PibXCao3SiMoOxIikj1rjVLux\r\nn4s4azYK0FKIKo2Y7QhCgKdgiQ29tuT12Ae2Xhf0NHfdkvvf7Tl18WHx5LA4u3Ns\r\nMT1hzGz2OQVbW24C1VrjAnTONXzMLsOHF8YOVxnYrDhW4Y6snYZZll/lAPxwl27z\r\n3yiEbNVID1c6lHSNNizePjo4mCjpOlBmWCyEhv7A8h6TwEGTC2IBHL+EpG5ZxTaC\r\nsSVZCcECgYEA6rANcXoBkRjN+IZWZG3WXMNGPa6N6Rjr5cAVdDHYOC03+5I4dzgf\r\nvL/+nrm6IAVyRNltkXWhRsbDkMh4RqTxlRIs9DvgVym2T97CkPAiI1f0OvpgQDSf\r\ngVhVAqGqu1Ra8AB2vREmw1OHQUg0nPRodEEDRhB/+mRKdS+uR5nxsOsCgYEA5aaU\r\n3OIgDxWm1kRCVDue07/L4mC8gJrWWypJ2Dq455rs4AJ44XHLn6J2pr5l9DoM862S\r\nkodLJjHmI4E0OiCIZ95X0JrdSYZT8/i5xHMqkIPy9Uc9mgQcZMKlsXvSh+esKBpy\r\nJT4sC9H5gFJ2vuE0WR6+oVT5kgQfEB3inLayhhECgYACXuDj4o2df5ilCAZbYVim\r\n+zn8aYT5c8z+NyCAWfiLKLnGCsYTPjfj2jSiOdINfMCYvXGD5KJKaruS/NNqM0RV\r\ncyeNGAW+G6fByshAWoyduse2yMysGVv7HH9PVX66AbIhdn+8jS3ND0zwdeBCLZ3Y\r\nfsefr477YoP2BxNFmeJ9HQKBgFaksMldbycBzj5M5pGNJPFTDYNNaBFFWdZvcAjq\r\nrtSC+RfTFvRH0MFbtFRYxXKNbFGLjR9HeCzi6qc+mgvMNmqp0ovbwd15lrcXgk8B\r\n/G8luUadKDqxjlzdq1H5G4c2+xbuU16FxGx5Ph8R/ccqhGuTU+zeeIKEl4unGtZx\r\nf41hAoGAQ8c0dse7U3ml/53OgORnMUKKj7+n79LBzUmEQe6OJwwXF5OL2KX9Q0Of\r\nKt5LZj/608CXyS9ZbyPsYVgWGyaOod0xJTGXYirJ/hkygiLIGNi3eqeKwtryHACs\r\n1afFHlX5boSJIz4AyesmyMod9Gw0wfSxsm4wY7oIkPMrg5h1GQE=\r\n-----END
+          RSA PRIVATE KEY-----\r\n"
+        buffer_size_bytes: 16384
+      router:
+        servers:
+        - 30.16.1.15
+        - 30.16.1.101
+      cc:
+        allow_app_ssh_access: true
+update:
+  canaries: 1
+  max_in_flight: 10
+  canary_watch_time: 1000-30000
+  update_watch_time: 1000-30000
+

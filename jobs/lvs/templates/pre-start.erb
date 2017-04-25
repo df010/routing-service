@@ -1,0 +1,5 @@
+#!/bin/bash
+DIR=`cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd`
+
+grep -n virtual_server <%=p("lvs.keepalived_conf")%>|cut -d ":" -f1|head -1|xargs -I % sed -i '%,$d' <%=p("lvs.keepalived_conf")%>
+cat $DIR/../config/lvs.conf >>  <%=p("lvs.keepalived_conf")%>

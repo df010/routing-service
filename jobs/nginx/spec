@@ -1,0 +1,11 @@
+---
+name: nginx
+templates:
+    ctl.sh: bin/ctl
+    nginx.conf.erb: config/nginx.conf
+    mime.types.erb: config/mime.types
+
+packages:
+- nginx
+
+properties: {}

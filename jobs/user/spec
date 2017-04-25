@@ -1,0 +1,13 @@
+---
+name: user
+
+description: "user"
+
+packages: []
+
+templates:
+  pre-start.erb: bin/pre-start
+
+properties:
+  user.password:
+    description: "password for cloud user"

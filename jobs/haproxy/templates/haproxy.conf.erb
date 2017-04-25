@@ -1,0 +1,59 @@
+global
+    log 127.0.0.1   syslog info
+    daemon
+    user vcap
+    group vcap
+    maxconn 64000
+    spread-checks 4
+    tune.bufsize 16384
+    stats socket /var/vcap/sys/run/haproxy/stats
+
+
+defaults
+    log global
+    timeout connect 30000ms
+    maxconn 64000
+    timeout client 900000ms
+    timeout server 900000ms
+    option dontlognull
+
+listen health_check_http_url
+    bind :8080
+    mode http
+    monitor-uri /health
+
+<%if !p("haproxy.backend").nil? {%>
+frontend http-in
+    mode http
+    bind :80
+    option httplog
+    option forwardfor
+    reqadd X-Forwarded-Proto:\ http
+    default_backend http-routers
+
+backend http-routers
+    mode http
+    balance roundrobin
+<%nodeIndex =0;p("haproxy.backend").each {|be|%>
+<%nodeIndex++%>    server node<%=nodeIndex%> <%be["ip"]%>:<%be["port"]%> check inter 1000
+<%}%>
+<%}%>
+
+
+<%if !p("haproxy.backend").nil? {%>
+frontend http-in
+    mode http
+    bind :80
+    option httplog
+    option forwardfor
+    reqadd X-Forwarded-Proto:\ http
+    default_backend http-routers
+
+backend http-routers
+    mode http
+    balance roundrobin
+<%nodeIndex =0; p("haproxy.backend").each {|be|%>
+<%nodeIndex++%>    server node<%=nodeIndex%> <%be["ip"]%>:<%be["port"]%> check inter 1000
+<%}%>
+<%}%>
+

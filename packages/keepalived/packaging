@@ -1,0 +1,6 @@
+set -e
+tar xzf keepalived/keepalived-1.2.16.tar.gz -C keepalived/
+cd keepalived/keepalived-1.2.16
+./configure --prefix=${BOSH_INSTALL_TARGET}
+make
+make install

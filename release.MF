@@ -1,0 +1,20 @@
+---
+packages:
+- name: apache_server
+  version: b9afe1535a82bea62759203e408c7e54d0c77760
+  fingerprint: b9afe1535a82bea62759203e408c7e54d0c77760
+  sha1: 5cebd57f962a18f768eddc4dceb4d3557ca66192
+  dependencies: []
+jobs:
+- name: apache
+  version: 6e0d422376aad969fc01f71137cf9e7bed44f9a3
+  fingerprint: 6e0d422376aad969fc01f71137cf9e7bed44f9a3
+  sha1: 83dfb40cf09770f19ff6354b8af21618241c6d2b
+license:
+  version: 61816d5590a6ea46a696c70fe66711c261ca0a5a
+  fingerprint: 61816d5590a6ea46a696c70fe66711c261ca0a5a
+  sha1: cc9c3fb3617fa5598b527129c1f53f24e260a78a
+commit_hash: 9637c6df
+uncommitted_changes: true
+name: apache
+version: '2'

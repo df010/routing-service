@@ -1,0 +1,23 @@
+---
+name: keepalived
+
+description: "Keepalived to relocate the IPs"
+
+packages:
+- keepalived
+
+templates:
+  keepalived.init.erb: bin/keepalived.init
+  keepalived.config.erb:  config/keepalived.config
+
+properties:
+  keepalived.vip:
+    description: "VIP for HAProxy"
+  keepalived.priority:
+    description: "Priority for keepalived"
+    default: 100
+  keepalived.virtual_router_id:
+    description: "Router ID that is used in the same cluster"
+    default: 240
+  keepalived.process:
+    description: "the process name that keepalived monit"

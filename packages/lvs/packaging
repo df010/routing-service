@@ -1,0 +1,11 @@
+set -e
+
+#VERSION="1.26"
+#sleep 180000
+#tar xzf lvs/ipvsadm-${VERSION}.tar.gz
+#cd ipvsadm-${VERSION}
+
+#make 
+mkdir ${BOSH_INSTALL_TARGET}/bin
+cp lvs/ipvsadm ${BOSH_INSTALL_TARGET}/bin/
+chmod 755 ${BOSH_INSTALL_TARGET}/bin/ipvsadm

@@ -1,0 +1,38 @@
+name: routing-service
+version: "2"
+commit_hash: non-git
+uncommitted_changes: false
+jobs:
+- name: haproxy
+  version: 4634bb9bcaad76cffb19682217c07c88afa56e39
+  fingerprint: 4634bb9bcaad76cffb19682217c07c88afa56e39
+  sha1: 11a974cfdee0901c2d3bced09c483dc1378287cc
+- name: keepalived
+  version: f8e2804f03336f1fe1483bf843f6df634488f913
+  fingerprint: f8e2804f03336f1fe1483bf843f6df634488f913
+  sha1: 4ed837b6322270817afd2bc58e617b4c7167cc57
+- name: nginx
+  version: 6e3d9a95a97c109f77dee7567bd6279ba6b5d815
+  fingerprint: 6e3d9a95a97c109f77dee7567bd6279ba6b5d815
+  sha1: f33e7323e0914b839d0cfb6f78e489a0b21e5e76
+packages:
+- name: common
+  version: dcc9c213600cbf0ed97c76c19d9cdf24396b838d
+  fingerprint: dcc9c213600cbf0ed97c76c19d9cdf24396b838d
+  sha1: 3d5db8db46ee04960f42b35dc75b078f2bcd87dd
+  dependencies: []
+- name: haproxy
+  version: bc610ef68ced4eef757fd1aaa242075bd77df8bf
+  fingerprint: bc610ef68ced4eef757fd1aaa242075bd77df8bf
+  sha1: e1161dabac29bf33628db5d2f4cc5a14f531aa27
+  dependencies: []
+- name: keepalived
+  version: 5efa624cc9562fe88cf52e5c7c2416228777bccb
+  fingerprint: 5efa624cc9562fe88cf52e5c7c2416228777bccb
+  sha1: bb35e999473024561be51a8e099de6b22ba9d226
+  dependencies: []
+- name: nginx
+  version: 84c8957349cca81a676ac028bdfc71b2c6d4eef2
+  fingerprint: 84c8957349cca81a676ac028bdfc71b2c6d4eef2
+  sha1: 146b5f79e25c81cecb58f7ca53fb3683e9ab262b
+  dependencies: []

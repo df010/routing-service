@@ -1,0 +1,20 @@
+---
+name: apache
+templates:
+  apache_ctl.erb: bin/ctl
+  httpd.conf.erb: conf/httpd.conf
+  
+packages:
+- apache_server
+
+properties:
+  apache.type: 
+    description: 'WORKER|PROXY'
+    default: "WORKER"
+  apache.workers:
+    description: "backend worker IP:PORT list for when apache.type is PROXY"
+    default: []
+    
+provides:
+- name: apache
+  type: apache

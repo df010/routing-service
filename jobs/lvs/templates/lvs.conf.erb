@@ -1,0 +1,21 @@
+<%p("lvs.ports").split(",").each do |port|%>
+virtual_server <%=p("keepalived.vip")%> <%=port%> {
+    delay_loop 6
+    lb_algo rr
+    lb_kind DR
+    persistence_timeout 3
+    protocol TCP
+
+    <%p("lvs.real_servers").to_s.split(",").each do |real_server| %>
+        real_server <%=real_server%> <%=port%> {
+        weight 1
+        TCP_CHECK{
+            connect_timeout 10
+            nb_get_retry 3
+            delay_before_retry 3
+            connect_port <%=port%>
+        }
+    }
+    <%end %>
+}
+<%end %>    

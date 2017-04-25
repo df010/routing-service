@@ -1,0 +1,145 @@
+#!/bin/bash 
+
+set -x
+set -e
+
+NAME=keepalived
+DAEMON=/var/vcap/packages/keepalived/sbin/keepalived
+CONFIG_TEMPLATE=/var/vcap/jobs/keepalived/config/keepalived.config
+CONFIG=/var/vcap/sys/run/keepalived/keepalived.config
+
+DESC="Keepalived"
+USER=vcap
+
+INIT_LOG_DIR=/var/vcap/sys/log/keepalived
+
+PID_FILE=/var/vcap/sys/run/keepalived/pid
+
+TIMESTAMP=/bin/date
+
+test -x "${DAEMON}"
+
+RETVAL=0
+
+sudo modprobe ip_vs
+sudo modprobe ip_vs_wrr
+
+ensure_dir() {
+    DIR=$1
+    if [ ! -d "${DIR}" ] ; then
+        mkdir -p "${DIR}"
+        chown -R "${USER}":"${USER}" "${DIR}"
+        chmod 755 "${DIR}"
+    fi
+}
+
+ensure_dirs() {
+    ensure_dir "$(dirname "${PID_FILE}")"
+    ensure_dir "${INIT_LOG_DIR}"
+}
+
+remove_pid() {
+    rm -f "${PID_FILE}"
+    rmdir "$(dirname "${PID_FILE}")" || :
+}
+
+start_keepalived() {
+    status_keepalived
+    if [ "${RETVAL}" = 0 ]; then
+        echo "Keepalived is currently running"
+    else
+        RETVAL=0
+        ensure_dirs
+        sed "s/interface eth0/interface `netstat -i|awk 'NR>2 {print $1}'|grep -v lo|head -1`/g"  $CONFIG_TEMPLATE > $CONFIG
+        echo "$("${TIMESTAMP}"): Starting Keepalived" >> "${INIT_LOG_DIR}/startup_stdout.log"
+        test -f "${CONFIG}"
+        set +e
+        "${DAEMON}" -f "${CONFIG}" -D -p "${PID_FILE}" \
+            1>> "${INIT_LOG_DIR}/startup_stdout.log" \
+            2>> "${INIT_LOG_DIR}/startup_stderr.log" \
+            0<&-
+        RETVAL=$?
+        set -e
+        case "${RETVAL}" in
+            0)
+                echo "$("${TIMESTAMP}"): Finished starting Keepalived" >> "${INIT_LOG_DIR}/startup_stdout.log"
+                echo "SUCCESS"
+                ;;
+            *)
+                echo "$("${TIMESTAMP}"): Errored starting Keepalived" >> "${INIT_LOG_DIR}/startup_stdout.log"
+                echo "$("${TIMESTAMP}"): Errored starting Keepalived" >> "${INIT_LOG_DIR}/startup_stderr.log"
+                remove_pid
+                echo "FAILED - check ${INIT_LOG_DIR}/startup_std*.log"
+                RETVAL=1
+                ;;
+        esac
+    fi
+}
+
+stop_keepalived() {
+    status_keepalived
+    if [ "${RETVAL}" = 0 ]; then
+        set +e
+        for pid in $(cat "${PID_FILE}"); do
+            kill ${pid} || RETVAL=$?
+        done
+        set -e
+        if [ "${RETVAL}" = 0 ]; then
+            remove_pid
+        else
+            echo "FAILED - check logs" >> "${INIT_LOG_DIR}/startup_stdout.log"
+        fi
+    else
+        echo "Keepalived not running" >> "${INIT_LOG_DIR}/startup_stdout.log"
+    fi
+}
+
+# RETVAL = 0 if running, != 0 if stopped
+status_keepalived() {
+    if [ -f "${PID_FILE}" ]; then
+        RETVAL=0
+        set +e
+        for pid in $(cat "${PID_FILE}"); do
+            kill -0 "${pid}" > /dev/null 2>&1 || RETVAL=3
+        done
+        kill -0 $(cat "${PID_FILE}") > /dev/null 2>&1
+        if [ $? != 0 ]; then
+            RETVAL=3
+        fi
+        set -e
+    else
+        RETVAL=1
+    fi
+}
+
+restart_keepalived() {
+    stop_keepalived
+    start_keepalived
+}
+
+case "$1" in
+    start)
+        echo -n "Starting ${DESC}: "
+        start_keepalived
+        echo "${NAME}."
+        ;;
+    stop)
+        echo -n "Stopping ${DESC}: "
+        stop_keepalived
+        echo "${NAME}."
+        ;;
+    status)
+        status_keepalived
+        ;;
+    force-reload|reload|restart)
+        echo -n "Restarting ${DESC}: "
+        restart_keepalived
+        echo "${NAME}."
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|reload|force-reload}" >&2
+        RETVAL=1
+        ;;
+esac
+
+exit "${RETVAL}"

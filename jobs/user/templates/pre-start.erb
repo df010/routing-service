@@ -1,0 +1,6 @@
+#!/bin/bash
+sudo su -c "useradd cloud -s /bin/bash -m -g vcap -G vcap"
+sudo adduser cloud admin
+sudo chpasswd << 'END'
+cloud:<%=p("user.password")%>
+END
